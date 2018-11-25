@@ -5,7 +5,7 @@ let print_help () =
   print_endline "===== ===== ===== ===== ========= ===== ===== ===== =====";
   print_newline();
   print_endline "Call the program with an input file having vocabulary";
-  print_endline "translations in the following format:";
+  print_endline "translations in the following format :";
   print_endline "                    \"word$translation\"";
   print_endline "It will run a training session so that the user will be";
   print_endline "able to know the vocabulary contained in this file."
@@ -33,7 +33,7 @@ let generate_vocabulary lines =
         f ((word, translation, false) :: acc) (line_number + 1) r
       | _ ->
         failwith
-          (Printf.sprintf "Wrong format: \"%s\" at line %d" l line_number)
+          (Printf.sprintf "Wrong format : \"%s\" at line %d" l line_number)
   in f [] 1 lines
 
 (** Takes the first [n] elements from list [l]. If there is less than [n]
@@ -41,7 +41,7 @@ let generate_vocabulary lines =
   * what is left in the list.
   *)
 let take n l =
-  if (n < 0) then failwith "take: n < 0" else
+  if (n < 0) then failwith "take : n < 0" else
   let rec f acc n l =
     if n = 0 then (List.rev acc, l) else
     match l with
@@ -72,12 +72,12 @@ let one_run vocabulary easy_rate =
   let rec f points = function
     | [] -> points
     | (word, translation, deja_vu) :: r ->
-      Printf.printf "=====> %s\n" word;
+      Printf.printf "===== ===== =====>   %s\n" word;
       print_string "[enter]";
       ignore (read_line());
-      Printf.printf "Answer: %s\n" translation;
+      Printf.printf "===== ===== Answer : %s\n" translation;
       let rec ask () =
-        print_string "Result? (e/m/h/n) : ";
+        print_string "Result ? (e/m/h/n) : ";
         match read_line() with
         | "e" -> begin
           let rand = Random.int 100 in
@@ -117,9 +117,10 @@ let one_run vocabulary easy_rate =
 (** Runs a training session over and over until the user decides to stop. *)
 let rec run vocabulary easy_rate =
   let score = one_run vocabulary easy_rate in
-  Printf.printf "Score: %.2f%%\n" score;
+  print_newline();
+  Printf.printf "===== ===== Score : %.2f %%\n" score;
   let rec ask_continue () =
-    print_string "Continue? (y/n) : ";
+    print_string "Continue ? (y/n) : ";
     let answer = read_line() in
     if answer = "y" then begin
       print_string "\n\n\n";
@@ -138,7 +139,7 @@ let () =
         exit 0
       end else ()
     | _ -> begin
-      Printf.printf "Usage: %s [-h | --help | file]\n" Sys.argv.(0);
+      Printf.printf "Usage : %s [-h | --help | file]\n" Sys.argv.(0);
       exit 1
     end
   in
@@ -146,10 +147,11 @@ let () =
   let lines = getlines ic in
   let vocabulary = generate_vocabulary lines in
   let rec ask_easy_rate () =
-    print_string "Repetition rate for the easy words (0-100) ? : ";
+    print_string "Repetition rate for the easy words (0-99) ? : ";
     match int_of_string_opt (read_line()) with
     | None -> ask_easy_rate()
-    | Some i -> if i < 0 || i > 100 then ask_easy_rate() else i
+    | Some i -> if i < 0 || i > 99 then ask_easy_rate() else i
   in
   let easy_rate = ask_easy_rate() in
+  print_newline();
   run vocabulary easy_rate
