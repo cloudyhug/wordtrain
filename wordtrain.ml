@@ -72,6 +72,9 @@ let one_run vocabulary easy_rate =
   let rec f points = function
     | [] -> points
     | (word, translation, deja_vu) :: r ->
+      for i = 0 to 20 do
+        print_newline()
+      done;
       Printf.printf "===== ===== =====>   %s\n" word;
       print_string "[enter]";
       ignore (read_line());
@@ -153,5 +156,11 @@ let () =
     | Some i -> if i < 0 || i > 99 then ask_easy_rate() else i
   in
   let easy_rate = ask_easy_rate() in
-  print_newline();
-  run vocabulary easy_rate
+  let rec ask_reverse () =
+    print_string "Reversed training ? (y/n) : ";
+    match read_line() with
+    | "y" -> run (List.map (fun (w, t, d) -> (t, w, d)) vocabulary) easy_rate
+    | "n" -> run vocabulary easy_rate
+    | _ -> ask_reverse()
+  in
+  ask_reverse()
