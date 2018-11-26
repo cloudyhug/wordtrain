@@ -135,6 +135,7 @@ let rec run vocabulary easy_rate =
 (* Shuffles the list [l]. *)
 let shuffle l =
   let a = Array.of_list l in
+  let n = Array.length a in
   for k = 1 to n - 1 do
     let i = n - k in
     let j = Random.int (i+1) in
