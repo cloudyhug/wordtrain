@@ -132,6 +132,18 @@ let rec run vocabulary easy_rate =
     else ask_continue()
   in ask_continue()
 
+(* Shuffles the list [l]. *)
+let shuffle l =
+  let a = Array.of_list l in
+  for k = 1 to n - 1 do
+    let i = n - k in
+    let j = Random.int (i+1) in
+    let tmp = a.(j) in
+    a.(j) <- a.(i);
+    a.(i) <- tmp
+  done;
+  Array.to_list a
+
 (* Main function *)
 let () =
   let () =
@@ -146,6 +158,7 @@ let () =
       exit 1
     end
   in
+  Random.self_init();
   let ic = open_in Sys.argv.(1) in
   let lines = getlines ic in
   let vocabulary = generate_vocabulary lines in
@@ -159,8 +172,8 @@ let () =
   let rec ask_reverse () =
     print_string "Reversed training ? (y/n) : ";
     match read_line() with
-    | "y" -> run (List.map (fun (w, t, d) -> (t, w, d)) vocabulary) easy_rate
-    | "n" -> run vocabulary easy_rate
+    | "y" -> (List.map (fun (w, t, d) -> (t, w, d)) vocabulary)
+    | "n" -> vocabulary
     | _ -> ask_reverse()
   in
-  ask_reverse()
+  run (shuffle (ask_reverse())) easy_rate
